@@ -5,7 +5,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Voice Journal to Handwriting Practice</title>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Architects+Daughter&display=swap');
+        @font-face {
+            font-family: 'TracingFont';
+            src: url('TeachingPrintDottedLined-Ea6W8.woff2') format('woff2'),
+                 url('TeachingPrintDottedLined-Ea6W8.otf') format('opentype');
+            font-display: swap;
+        }
         
         * {
             margin: 0;
@@ -114,14 +119,11 @@
         
         /* Handwriting font styles - creates tracing effect */
         .handwriting {
-            font-family: 'Architects Daughter', 'Comic Sans MS', cursive;
-            font-size: 48px;
-            line-height: 3;
-            letter-spacing: 2px;
-            color: transparent;
-            -webkit-text-stroke: 1px #cccccc;
-            text-stroke: 1px #cccccc;
-            font-weight: bold;
+            font-family: 'TracingFont', 'Arial', sans-serif;
+            font-size: 36px;
+            line-height: 2.8;
+            letter-spacing: 1px;
+            color: #000000;
         }
         
         .status {
@@ -171,10 +173,8 @@
             #tracingOutput {
                 border: none;
                 background: white;
-                font-size: 52px;
-                line-height: 3.5;
-                -webkit-text-stroke: 1.5px #aaaaaa;
-                text-stroke: 1.5px #aaaaaa;
+                font-size: 40px;
+                line-height: 3;
             }
         }
     </style>
