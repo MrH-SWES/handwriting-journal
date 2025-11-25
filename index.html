@@ -200,7 +200,7 @@
                     <button class="convert-btn" id="convertBtn">➡️ Convert to Handwriting Font</button>
                 </div>
                 <div class="button-group">
-                    <button class="print-btn" id="printBtn">🖨️ Print Handwriting Practice</button>
+                    <button class="print-btn" id="emailBtn">📧 Email to Teacher</button>
                     <button class="clear-btn" id="clearOutput">Clear</button>
                 </div>
                 <textarea id="tracingOutput" class="handwriting" placeholder="Your handwriting practice text will appear here..." readonly></textarea>
@@ -215,7 +215,7 @@
         const journalInput = document.getElementById('journalInput');
         const tracingOutput = document.getElementById('tracingOutput');
         const convertBtn = document.getElementById('convertBtn');
-        const printBtn = document.getElementById('printBtn');
+        const emailBtn = document.getElementById('emailBtn');
         const clearInputBtn = document.getElementById('clearInput');
         const clearOutputBtn = document.getElementById('clearOutput');
         const statusDiv = document.getElementById('status');
@@ -231,12 +231,20 @@
             }
         });
         
-        // Print button click
-        printBtn.addEventListener('click', () => {
+        // Email button click
+        emailBtn.addEventListener('click', () => {
             if (tracingOutput.value.trim()) {
-                window.print();
+                // Change this to your email address
+                const teacherEmail = 'whenderson@sw.wednet.edu';
+                const subject = 'Handwriting Practice Journal';
+                const body = encodeURIComponent(tracingOutput.value);
+                
+                // Opens Gmail compose window
+                window.open(`https://mail.google.com/mail/?view=cm&fs=1&to=${teacherEmail}&su=${subject}&body=${body}`, '_blank');
+                
+                showStatus('✓ Opening email...', 'info');
             } else {
-                showStatus('Please convert text first before printing.', 'error');
+                showStatus('Please convert text first before emailing.', 'error');
             }
         });
         
