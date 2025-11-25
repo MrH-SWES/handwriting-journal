@@ -5,6 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Voice Journal to Handwriting Practice</title>
     <style>
+        @font-face {
+            font-family: 'TracingFont';
+            src: url('TeachingPrintDottedLined-Ea6W8.otf') format('opentype');
+        }
+        
         * {
             margin: 0;
             padding: 0;
@@ -65,26 +70,6 @@
             transition: background-color 0.3s;
         }
         
-        .voice-btn {
-            background-color: #4CAF50;
-            color: white;
-            flex: 1;
-        }
-        
-        .voice-btn:hover {
-            background-color: #45a049;
-        }
-        
-        .voice-btn.listening {
-            background-color: #f44336;
-            animation: pulse 1.5s infinite;
-        }
-        
-        @keyframes pulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.7; }
-        }
-        
         .convert-btn {
             background-color: #2196F3;
             color: white;
@@ -132,11 +117,11 @@
         
         /* Handwriting font styles */
         .handwriting {
-            font-family: 'Segoe Print', 'Comic Sans MS', cursive;
-            font-size: 24px;
-            line-height: 2.5;
-            letter-spacing: 2px;
-            color: #cccccc;
+            font-family: 'TracingFont', 'Segoe Print', cursive;
+            font-size: 32px;
+            line-height: 3;
+            letter-spacing: 1px;
+            color: #000000;
         }
         
         .status {
@@ -186,8 +171,8 @@
             #tracingOutput {
                 border: none;
                 background: white;
-                font-size: 28px;
-                line-height: 3;
+                font-size: 36px;
+                line-height: 3.5;
             }
         }
     </style>
@@ -197,14 +182,13 @@
         <h1>📝 Voice Journal to Handwriting Practice</h1>
         
         <div class="panels">
-            <!-- Left Panel: Voice Input -->
+            <!-- Left Panel: Text Input -->
             <div class="panel">
-                <h2>Step 1: Voice Type Your Journal</h2>
+                <h2>Step 1: Type or Dictate Your Journal</h2>
                 <div class="button-group">
-                    <button class="voice-btn" id="voiceBtn">🎤 Start Voice Typing</button>
                     <button class="clear-btn" id="clearInput">Clear</button>
                 </div>
-                <textarea id="journalInput" placeholder="Click 'Start Voice Typing' and speak your journal entry, or type here..."></textarea>
+                <textarea id="journalInput" placeholder="Type here or use Chromebook dictation (Search + D)..."></textarea>
             </div>
             
             <!-- Right Panel: Handwriting Output -->
@@ -226,7 +210,6 @@
 
     <script>
         // Get elements
-        const voiceBtn = document.getElementById('voiceBtn');
         const journalInput = document.getElementById('journalInput');
         const tracingOutput = document.getElementById('tracingOutput');
         const convertBtn = document.getElementById('convertBtn');
@@ -234,81 +217,6 @@
         const clearInputBtn = document.getElementById('clearInput');
         const clearOutputBtn = document.getElementById('clearOutput');
         const statusDiv = document.getElementById('status');
-        
-        let recognition = null;
-        let isListening = false;
-        
-        // Check for browser support
-        if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
-            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-            recognition = new SpeechRecognition();
-            recognition.continuous = true;
-            recognition.interimResults = true;
-            recognition.lang = 'en-US';
-            
-            recognition.onresult = (event) => {
-                let interimTranscript = '';
-                let finalTranscript = '';
-                
-                for (let i = event.resultIndex; i < event.results.length; i++) {
-                    const transcript = event.results[i][0].transcript;
-                    if (event.results[i].isFinal) {
-                        finalTranscript += transcript + ' ';
-                    } else {
-                        interimTranscript += transcript;
-                    }
-                }
-                
-                // Update the textarea with final results
-                if (finalTranscript) {
-                    journalInput.value += finalTranscript;
-                }
-            };
-            
-            recognition.onerror = (event) => {
-                console.error('Speech recognition error:', event.error);
-                showStatus('Error: ' + event.error, 'error');
-                stopListening();
-            };
-            
-            recognition.onend = () => {
-                if (isListening) {
-                    recognition.start(); // Restart if still supposed to be listening
-                }
-            };
-        }
-        
-        // Voice button click
-        voiceBtn.addEventListener('click', () => {
-            if (!recognition) {
-                showStatus('Speech recognition is not supported in this browser. Please use Chrome, Edge, or Safari.', 'error');
-                return;
-            }
-            
-            if (isListening) {
-                stopListening();
-            } else {
-                startListening();
-            }
-        });
-        
-        function startListening() {
-            recognition.start();
-            isListening = true;
-            voiceBtn.textContent = '🔴 Stop Voice Typing';
-            voiceBtn.classList.add('listening');
-            showStatus('Listening... Speak now!', 'info');
-        }
-        
-        function stopListening() {
-            if (recognition) {
-                recognition.stop();
-            }
-            isListening = false;
-            voiceBtn.textContent = '🎤 Start Voice Typing';
-            voiceBtn.classList.remove('listening');
-            showStatus('Voice typing stopped.', 'info');
-        }
         
         // Convert button click
         convertBtn.addEventListener('click', () => {
@@ -350,13 +258,6 @@
                 statusDiv.className = 'status';
             }, 3000);
         }
-        
-        // Stop listening when page unloads
-        window.addEventListener('beforeunload', () => {
-            if (isListening) {
-                stopListening();
-            }
-        });
     </script>
 </body>
 </html>
