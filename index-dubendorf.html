@@ -1,1 +1,273 @@
-.
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Voice Journal to Handwriting Practice</title>
+    <style>
+        @font-face {
+            font-family: 'TracingFont';
+            src: url('TeachingPrintDottedLined-Ea6W8.woff2') format('woff2'),
+                 url('TeachingPrintDottedLined-Ea6W8.otf') format('opentype');
+            font-display: swap;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 30px;
+        }
+        
+        .panels {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-bottom: 20px;
+        }
+        
+        .panel {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .panel h2 {
+            color: #555;
+            margin-bottom: 15px;
+            font-size: 1.3em;
+        }
+        
+        .button-group {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+        
+        button {
+            padding: 12px 24px;
+            font-size: 16px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        
+        .convert-btn {
+            background-color: #2196F3;
+            color: white;
+            width: 100%;
+        }
+        
+        .convert-btn:hover {
+            background-color: #0b7dda;
+        }
+        
+        .clear-btn {
+            background-color: #ff9800;
+            color: white;
+        }
+        
+        .clear-btn:hover {
+            background-color: #e68900;
+        }
+        
+        .print-btn {
+            background-color: #9C27B0;
+            color: white;
+        }
+        
+        .print-btn:hover {
+            background-color: #7B1FA2;
+        }
+        
+        textarea {
+            width: 100%;
+            min-height: 400px;
+            padding: 15px;
+            font-size: 18px;
+            border: 2px solid #ddd;
+            border-radius: 5px;
+            resize: vertical;
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+        }
+        
+        #tracingOutput {
+            font-family: 'Courier New', monospace;
+            background-color: #fafafa;
+        }
+        
+        /* Handwriting font styles - creates tracing effect */
+        .handwriting {
+            font-family: 'TracingFont', 'Arial', sans-serif;
+            font-size: 36px;
+            line-height: 2.8;
+            letter-spacing: 1px;
+            color: #000000;
+        }
+        
+        .status {
+            text-align: center;
+            padding: 10px;
+            margin-top: 10px;
+            border-radius: 5px;
+            font-weight: bold;
+        }
+        
+        .status.info {
+            background-color: #e3f2fd;
+            color: #1976d2;
+        }
+        
+        .status.error {
+            background-color: #ffebee;
+            color: #c62828;
+        }
+        
+        @media print {
+            body {
+                background: white;
+                padding: 0;
+            }
+            
+            .container {
+                box-shadow: none;
+                padding: 20px;
+            }
+            
+            .panels {
+                display: block;
+            }
+            
+            .panel:first-child,
+            button,
+            .status,
+            h1 {
+                display: none;
+            }
+            
+            .panel:last-child h2 {
+                margin-bottom: 20px;
+            }
+            
+            #tracingOutput {
+                border: none;
+                background: white;
+                font-size: 40px;
+                line-height: 3;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>📝 Voice Journal to Handwriting Practice</h1>
+        
+        <div class="panels">
+            <!-- Left Panel: Text Input -->
+            <div class="panel">
+                <h2>Step 1: Type or Dictate Your Journal</h2>
+                <div class="button-group">
+                    <button class="clear-btn" id="clearInput">Clear</button>
+                </div>
+                <textarea id="journalInput" placeholder="Type here or use Chromebook dictation (Search + D)..."></textarea>
+            </div>
+            
+            <!-- Right Panel: Handwriting Output -->
+            <div class="panel">
+                <h2>Step 2: Convert to Handwriting Practice</h2>
+                <div class="button-group">
+                    <button class="convert-btn" id="convertBtn">➡️ Convert to Handwriting Font</button>
+                </div>
+                <div class="button-group">
+                    <button class="print-btn" id="emailBtn">📧 Email to Teacher</button>
+                    <button class="clear-btn" id="clearOutput">Clear</button>
+                </div>
+                <textarea id="tracingOutput" class="handwriting" placeholder="Your handwriting practice text will appear here..." readonly></textarea>
+            </div>
+        </div>
+        
+        <div id="status"></div>
+    </div>
+
+    <script>
+        // Get elements
+        const journalInput = document.getElementById('journalInput');
+        const tracingOutput = document.getElementById('tracingOutput');
+        const convertBtn = document.getElementById('convertBtn');
+        const emailBtn = document.getElementById('emailBtn');
+        const clearInputBtn = document.getElementById('clearInput');
+        const clearOutputBtn = document.getElementById('clearOutput');
+        const statusDiv = document.getElementById('status');
+        
+        // Convert button click
+        convertBtn.addEventListener('click', () => {
+            const text = journalInput.value.trim();
+            if (text) {
+                tracingOutput.value = text;
+                showStatus('✓ Converted! Ready to print.', 'info');
+            } else {
+                showStatus('Please enter some text first.', 'error');
+            }
+        });
+        
+        // Email button click
+        emailBtn.addEventListener('click', () => {
+            if (tracingOutput.value.trim()) {
+                // Change this to your email address
+                const teacherEmail = 'hdubendorf@sw.wednet.edu';
+                const subject = 'Handwriting Practice Journal';
+                const body = encodeURIComponent(tracingOutput.value);
+                
+                // Opens Gmail compose window
+                window.open(`https://mail.google.com/mail/?view=cm&fs=1&to=${teacherEmail}&su=${subject}&body=${body}`, '_blank');
+                
+                showStatus('✓ Opening email...', 'info');
+            } else {
+                showStatus('Please convert text first before emailing.', 'error');
+            }
+        });
+        
+        // Clear buttons
+        clearInputBtn.addEventListener('click', () => {
+            journalInput.value = '';
+            showStatus('Input cleared.', 'info');
+        });
+        
+        clearOutputBtn.addEventListener('click', () => {
+            tracingOutput.value = '';
+            showStatus('Output cleared.', 'info');
+        });
+        
+        // Status message function
+        function showStatus(message, type) {
+            statusDiv.textContent = message;
+            statusDiv.className = 'status ' + type;
+            setTimeout(() => {
+                statusDiv.textContent = '';
+                statusDiv.className = 'status';
+            }, 3000);
+        }
+    </script>
+</body>
+</html>
