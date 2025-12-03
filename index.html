@@ -7,20 +7,20 @@
     <style>
         @font-face {
     font-family: 'TracingFont';
-    src: url('TeachingPrintDottedLined-Ea6W8.otf') format('opentype');
+    src: url('https://mrh-swes.github.io/handwriting-journal/TeachingPrintDottedLined-Ea6W8.otf') format('opentype');
     font-weight: normal;
     font-style: normal;
     font-display: block;
 }
 
-        /* Force font preload */
-        body::before {
-            content: 'abcdefghijklmnopqrstuvwxyz';
-            font-family: 'TracingFont';
-            position: absolute;
-            opacity: 0;
-            pointer-events: none;
-        }
+/* Force font preload */
+body::before {
+    content: 'abcdefghijklmnopqrstuvwxyz';
+    font-family: 'TracingFont';
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
+}
 
         * {
             margin: 0;
